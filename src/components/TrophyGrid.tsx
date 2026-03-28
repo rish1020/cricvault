@@ -3,7 +3,6 @@
 import Link from "next/link";
 import type { Trophy } from "@/lib/data";
 import type { DomesticTrophy } from "@/lib/domesticData";
-import TrophyIllustration from "@/components/TrophyIllustration";
 import FlagDisplay from "@/components/FlagDisplay";
 
 /* ── International card ─────────────────────────────────────────────────── */
@@ -28,8 +27,13 @@ function IntlCard({ trophy }: { trophy: Trophy }) {
     >
       <div className={`relative h-36 bg-gradient-to-br ${trophy.color} overflow-hidden`}>
         <div className="absolute inset-0 bg-black/30" />
-        <div className="absolute -right-4 -bottom-4 opacity-30 group-hover:opacity-50 group-hover:scale-105 transition-all duration-500 pointer-events-none">
-          <TrophyIllustration id={trophy.id} className="w-32 h-40" />
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
+          <span
+            className="font-display font-black text-white/[0.12] group-hover:text-white/[0.18] transition-all duration-500 leading-none text-center px-4"
+            style={{ fontSize: "clamp(1.6rem, 5vw, 3rem)", letterSpacing: "-0.02em" }}
+          >
+            {trophy.shortName}
+          </span>
         </div>
         <div className="absolute top-4 left-4">
           <span

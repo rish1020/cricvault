@@ -37,29 +37,6 @@ export default function TournamentsLayout({
       {/* ── Page-specific content ── */}
       {children}
 
-      {/* ── Footer ── */}
-      <footer
-        className="border-t py-8 px-5 mt-4"
-        style={{ borderColor: "var(--border-faint)" }}
-      >
-        <div className="max-w-6xl mx-auto flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-2">
-            <span
-              className="font-display font-bold text-sm"
-              style={{ color: "var(--text-primary)" }}
-            >
-              Cric
-            </span>
-            <span className="font-display font-bold text-sm text-amber-400">Vault</span>
-          </div>
-          <p
-            className="text-[11px]"
-            style={{ color: "var(--text-faint)", fontFamily: "var(--font-geist-mono)" }}
-          >
-            Data accurate as of 2025 · Not affiliated with ICC
-          </p>
-        </div>
-      </footer>
     </main>
   );
 }

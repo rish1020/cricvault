@@ -3,16 +3,33 @@ import { notFound } from "next/navigation";
 import { getTrophyById, trophies } from "@/lib/data";
 import TrophyIllustration from "@/components/TrophyIllustration";
 import FlagDisplay from "@/components/FlagDisplay";
+import JsonLd from "@/components/JsonLd";
+
+const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? "https://cricvault.app";
 
 export function generateStaticParams() {
   return trophies.map((t) => ({ gender: t.gender, id: t.id }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ gender: string; id: string }> }) {
-  const { id } = await params;
+  const { gender, id } = await params;
   const trophy = getTrophyById(id);
   if (!trophy) return {};
-  return { title: `${trophy.shortName} — CricVault`, description: trophy.description };
+  const genderLabel = gender === "men" ? "Men's" : "Women's";
+  const desc = `${trophy.description} Current champion: ${trophy.currentChampion} (${trophy.currentChampionYear}).`;
+  return {
+    title: `${trophy.shortName} — CricVault`,
+    description: desc,
+    openGraph: {
+      title: `${trophy.name} — CricVault`,
+      description: desc,
+      url: `${BASE}/tournaments/international/${gender}/${id}`,
+      images: [{ url: `${BASE}/tournaments/international/${gender}/${id}/opengraph-image`, width: 1200, height: 630 }],
+    },
+    twitter: { card: "summary_large_image" as const },
+    alternates: { canonical: `${BASE}/tournaments/international/${gender}/${id}` },
+  };
+  void genderLabel;
 }
 
 export default async function TrophyPage({ params }: { params: Promise<{ gender: string; id: string }> }) {
@@ -42,36 +59,44 @@ export default async function TrophyPage({ params }: { params: Promise<{ gender:
   const genderLabel = trophy.gender === "women" ? "Women's Tournaments" : "Men's Tournaments";
   const backHref = `/tournaments/international/${trophy.gender}`;
 
+  const breadcrumbSchema = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: BASE },
+      { "@type": "ListItem", position: 2, name: genderLabel, item: `${BASE}${backHref}` },
+      { "@type": "ListItem", position: 3, name: trophy.name, item: `${BASE}/tournaments/international/${trophy.gender}/${trophy.id}` },
+    ],
+  };
+
   return (
     <main className="min-h-screen" style={{ background: "var(--background)", color: "var(--foreground)" }}>
+      <JsonLd data={breadcrumbSchema} />
 
       {/* ── Compact page header ── */}
       <section
-        className="relative overflow-hidden border-b sticky top-14 z-40"
-        style={{ borderColor: "var(--border)", background: "var(--header-bg-solid)", backdropFilter: "blur(20px) saturate(180%)" }}
+        className="relative overflow-hidden border-b"
+        style={{ borderColor: "var(--border)", background: "var(--bg-subtle)" }}
       >
         <div className={`absolute inset-0 bg-gradient-to-br ${trophy.color} pointer-events-none`} style={{ opacity: 0.06 }} />
 
         <div className="relative max-w-7xl mx-auto px-6 py-5">
-          {/* Breadcrumb */}
-          <div className="flex items-center gap-1.5 mb-4 text-[11px]" style={{ color: "var(--text-muted)" }}>
-            <Link href={backHref} className="hover:text-white transition-colors flex items-center gap-1">
-              <svg width="10" height="10" viewBox="0 0 12 12" fill="none">
-                <path d="M8 2L4 6l4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+          {/* Back link */}
+          <div className="mb-4">
+            <Link
+              href={backHref}
+              className="back-link inline-flex items-center gap-1.5 transition-colors text-[13px] font-medium"
+              style={{ color: "var(--text-muted)" }}
+            >
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M8 2L4 6l4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
               </svg>
-              {genderLabel}
+              Back to Tournaments
             </Link>
-            <span>/</span>
-            <span style={{ color: "var(--text-body)" }}>{trophy.shortName}</span>
           </div>
 
           {/* Header row */}
           <div className="flex items-center gap-5">
-            {/* Small trophy illustration */}
-            <div className="hidden sm:block shrink-0 opacity-90">
-              <TrophyIllustration id={trophy.id} className="w-14 h-20" />
-            </div>
-
             {/* Title + meta */}
             <div className="flex-1 min-w-0">
               <div className="flex items-center gap-2 flex-wrap mb-1">
@@ -268,17 +293,6 @@ export default async function TrophyPage({ params }: { params: Promise<{ gender:
         </div>{/* end 3-col grid */}
       </div>
 
-      <footer className="border-t py-5 px-6 mt-6" style={{ borderColor: "var(--border-faint)" }}>
-        <div className="max-w-7xl mx-auto flex items-center justify-between flex-wrap gap-4">
-          <div className="flex items-center gap-1">
-            <span className="font-display font-bold text-sm" style={{ color: "var(--text-primary)" }}>Cric</span>
-            <span className="font-display font-bold text-sm text-amber-400">Vault</span>
-          </div>
-          <p className="text-[11px]" style={{ color: "var(--text-faint)", fontFamily: "var(--font-geist-mono)" }}>
-            Data accurate as of 2025 · Not affiliated with ICC
-          </p>
-        </div>
-      </footer>
     </main>
   );
 }

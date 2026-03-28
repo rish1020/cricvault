@@ -10,7 +10,7 @@ const NAV = [
   { label: "Home",        href: "/" },
   { label: "Tournaments", href: "/tournaments" },
   { label: "Timeline",    href: "/timeline" },
-  { label: "Records",     href: "/records" },
+  { label: "Cabinet",     href: "/cabinet" },
   { label: "About",       href: "/about" },
 ];
 
@@ -42,6 +42,7 @@ export default function Header() {
   const isActive = (href: string) => {
     if (href === "/tournaments") return pathname.startsWith("/tournaments") || pathname.startsWith("/trophy/") || pathname.startsWith("/domestic");
     if (href === "/timeline") return pathname.startsWith("/timeline");
+    if (href === "/cabinet") return pathname.startsWith("/cabinet");
     return pathname === href;
   };
 
@@ -91,8 +92,11 @@ export default function Header() {
               onClick={() => setOpen(!open)}
               className="md:hidden p-2 rounded-lg transition-all"
               style={{ color: "var(--text-muted)" }}
+              aria-label={open ? "Close navigation menu" : "Open navigation menu"}
+              aria-expanded={open}
+              aria-controls="mobile-nav"
             >
-              <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <svg width="18" height="18" viewBox="0 0 18 18" fill="none" aria-hidden="true">
                 {open
                   ? <path d="M4 4l10 10M14 4L4 14" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
                   : <path d="M3 5.5h12M3 9h12M3 12.5h12" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
@@ -106,6 +110,7 @@ export default function Header() {
       {/* Mobile menu */}
       {open && (
         <div
+          id="mobile-nav"
           className="md:hidden border-b px-5 py-4 flex flex-col gap-0.5"
           style={{
             background: "var(--header-bg-solid)",

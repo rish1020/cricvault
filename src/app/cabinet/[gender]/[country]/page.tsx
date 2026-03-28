@@ -1,25 +1,22 @@
 import { notFound } from "next/navigation";
 import { trophies } from "@/lib/data";
 import { teamToSlug, slugToTeam } from "@/lib/teamSlug";
-import Timeline from "@/components/Timeline";
+import TrophyShelf from "@/components/TrophyShelf";
 
 type Gender = "all" | "men" | "women";
 const VALID_GENDERS: Gender[] = ["all", "men", "women"];
 
-/* ── Static params for most common routes ── */
 export function generateStaticParams() {
-  // Collect all champion names across all trophies
+  const genders: Gender[] = ["all", "men", "women"];
   const allTeams = Array.from(
     new Set(trophies.flatMap((t) => t.winners.map((w) => w.champion)))
   );
 
-  const params: { gender: string; team: string }[] = [];
+  const params: { gender: string; country: string }[] = [];
 
-  for (const g of VALID_GENDERS) {
-    // /timeline/<gender>/all
-    params.push({ gender: g, team: "all" });
+  for (const g of genders) {
+    params.push({ gender: g, country: "all" });
 
-    // /timeline/<gender>/<team>
     const relevantTeams =
       g === "all"
         ? allTeams
@@ -32,7 +29,7 @@ export function generateStaticParams() {
           );
 
     for (const team of relevantTeams) {
-      params.push({ gender: g, team: teamToSlug(team) });
+      params.push({ gender: g, country: teamToSlug(team) });
     }
   }
 
@@ -42,29 +39,29 @@ export function generateStaticParams() {
 export async function generateMetadata({
   params,
 }: {
-  params: Promise<{ gender: string; team: string }>;
+  params: Promise<{ gender: string; country: string }>;
 }) {
-  const { gender, team } = await params;
+  const { gender, country } = await params;
   const allTeams = Array.from(
     new Set(trophies.flatMap((t) => t.winners.map((w) => w.champion)))
   );
-  const teamName = slugToTeam(team, allTeams);
+  const countryName = slugToTeam(country, allTeams);
   const genderLabel =
     gender === "men" ? "Men's" : gender === "women" ? "Women's" : "All";
-  const teamLabel = teamName ?? "All Teams";
+  const countryLabel = countryName ?? "All Nations";
 
-  const url = `/timeline/${gender}/${team}`;
+  const url = `/cabinet/${gender}/${country}`;
   const description =
-    teamName
-      ? `Complete ICC trophy history for ${teamName} — every World Cup and major tournament win.`
-      : `Complete ICC tournament winner timeline — filter by ${genderLabel.toLowerCase()} cricket or search by team.`;
+    countryName
+      ? `ICC trophy cabinet for ${countryName} — every World Cup and major tournament they've won in ${genderLabel.toLowerCase()} cricket.`
+      : `ICC trophy medal table — ${genderLabel.toLowerCase()} cricket wins ranked by country across all major tournaments.`;
 
   return {
-    title: `Timeline · ${genderLabel} · ${teamLabel} — CricVault`,
+    title: `Cabinet · ${genderLabel} · ${countryLabel} — CricVault`,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title: `Timeline · ${genderLabel} · ${teamLabel} — CricVault`,
+      title: `Cabinet · ${genderLabel} · ${countryLabel} — CricVault`,
       description,
       url,
     },
@@ -72,34 +69,31 @@ export async function generateMetadata({
   };
 }
 
-export default async function TimelinePage({
+export default async function CabinetRoute({
   params,
 }: {
-  params: Promise<{ gender: string; team: string }>;
+  params: Promise<{ gender: string; country: string }>;
 }) {
-  const { gender, team } = await params;
+  const { gender, country } = await params;
 
-  // Validate gender segment
   if (!VALID_GENDERS.includes(gender as Gender)) notFound();
 
-  // Collect all champion names to resolve the team slug
   const allTeams = Array.from(
     new Set(trophies.flatMap((t) => t.winners.map((w) => w.champion)))
   );
 
-  // "all" is the wildcard; anything else must match a known team slug
-  const teamName = team === "all" ? null : slugToTeam(team, allTeams);
-  if (team !== "all" && teamName === null) notFound();
+  const countryName = country === "all" ? null : slugToTeam(country, allTeams);
+  if (country !== "all" && countryName === null) notFound();
 
   return (
     <main
       className="min-h-screen"
       style={{ background: "var(--background)", color: "var(--foreground)" }}
     >
-      <Timeline
+      <TrophyShelf
         trophies={trophies}
         gender={gender as Gender}
-        team={teamName}
+        country={countryName}
       />
     </main>
   );

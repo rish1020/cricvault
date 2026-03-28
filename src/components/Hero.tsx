@@ -1,23 +1,61 @@
+import Link from "next/link";
 import type { Trophy } from "@/lib/data";
 import FlagDisplay from "@/components/FlagDisplay";
 import HexBackground from "@/components/HexBackground";
 
-function BentoCard({
-  children,
-  className = "",
-}: {
-  children: React.ReactNode;
-  className?: string;
+function ChampionCard({ trophy, current, accent, format }: {
+  trophy: Trophy;
+  current: Trophy["winners"][number];
+  accent: string;
+  format: string;
 }) {
   return (
-    <div
-      className={`rounded-2xl border p-5 relative overflow-hidden ${className}`}
-      style={{ background: "var(--bg-card)", borderColor: "var(--border-med)" }}
+    <Link
+      href={`/tournaments/international/${trophy.gender}/${trophy.id}`}
+      className="champion-card relative rounded-2xl border overflow-hidden"
+      style={{
+        background: "var(--bg-card)",
+        borderColor: "var(--border-med)",
+        "--card-accent": accent,
+      } as React.CSSProperties}
     >
-      {children}
-    </div>
+      <div className="h-[3px] w-full" style={{ background: accent }} />
+      <div className="px-4 py-3.5">
+        <div className="flex items-center justify-between mb-2.5">
+          <p className="text-[11px] font-semibold leading-snug truncate pr-2"
+            style={{ color: "var(--text-secondary)" }}>
+            {trophy.shortName}
+          </p>
+          <span className="text-[9px] font-mono uppercase tracking-wider px-1.5 py-0.5 rounded shrink-0"
+            style={{ background: accent + "20", color: accent }}>
+            {format}
+          </span>
+        </div>
+        <div className="flex items-center gap-2 mb-1">
+          <FlagDisplay team={current.champion} size={20} />
+          <span className="font-bold text-sm leading-tight" style={{ color: "var(--text-primary)" }}>
+            {current.champion}
+          </span>
+        </div>
+        <p className="text-[10px] font-mono mt-0.5" style={{ color: "var(--text-dim)" }}>
+          since {current.year}
+        </p>
+      </div>
+    </Link>
   );
 }
+
+const MEN_FEATURED = [
+  { id: "cricket-world-cup",       accent: "#f59e0b", format: "ODI" },
+  { id: "t20-world-cup",           accent: "#6366f1", format: "T20I" },
+  { id: "champions-trophy",        accent: "#10b981", format: "ODI" },
+  { id: "world-test-championship", accent: "#64748b", format: "Test" },
+] as const;
+
+const WOMEN_FEATURED = [
+  { id: "womens-world-cup",       accent: "#ec4899", format: "ODI" },
+  { id: "womens-t20-world-cup",   accent: "#8b5cf6", format: "T20I" },
+] as const;
 
 export default function Hero({
   trophies,
@@ -30,30 +68,24 @@ export default function Hero({
   menCount: number;
   womenCount: number;
 }) {
-  // Find most recently won trophy
-  const latestTrophy = [...trophies].sort(
-    (a, b) => b.currentChampionYear - a.currentChampionYear
-  )[0];
+  void totalEditions; void menCount; void womenCount;
 
-  // Find longest reigning champion (most titles in one tournament)
-  const dominantStat = trophies.reduce(
-    (best, t) => {
-      const counts: Record<string, number> = {};
-      t.winners.forEach((w) => {
-        counts[w.champion] = (counts[w.champion] || 0) + 1;
-      });
-      const top = Object.entries(counts).sort((a, b) => b[1] - a[1])[0];
-      return top && top[1] > best.count
-        ? { team: top[0], count: top[1], tournament: t.shortName }
-        : best;
-    },
-    { team: "", count: 0, tournament: "" }
-  );
+  function buildCards(list: readonly { id: string; accent: string; format: string }[]) {
+    return list.map(({ id, accent, format }) => {
+      const trophy = trophies.find((t) => t.id === id);
+      if (!trophy) return null;
+      const current = trophy.winners[0];
+      return { trophy, current, accent, format };
+    }).filter(Boolean) as { trophy: Trophy; current: Trophy["winners"][number]; accent: string; format: string }[];
+  }
+
+  const menCards    = buildCards(MEN_FEATURED);
+  const womenCards  = buildCards(WOMEN_FEATURED);
 
   return (
     <section className="relative overflow-hidden flex-1 flex flex-col" style={{ background: "var(--background)" }}>
       {/* Hex grid background — fills 100% of section height */}
-      <HexBackground cols={32} rows={16} opacity={0.9} />
+      <HexBackground cols={44} rows={18} opacity={0.9} />
 
       {/* Ambient glow layers on top of hex grid */}
       <div className="pointer-events-none absolute inset-0" aria-hidden>
@@ -65,7 +97,10 @@ export default function Hero({
           className="absolute bottom-0 right-0 w-[500px] h-[400px] rounded-full"
           style={{ background: "radial-gradient(circle, rgba(56,189,248,0.06) 0%, transparent 65%)" }}
         />
-        {/* Vignette so content remains readable */}
+        <div
+          className="absolute inset-0"
+          style={{ background: "radial-gradient(ellipse 55% 55% at 50% 50%, rgba(245,166,35,0.04) 0%, transparent 70%)" }}
+        />
         <div
           className="absolute inset-0"
           style={{ background: "radial-gradient(ellipse 70% 80% at 50% 50%, transparent 30%, var(--header-bg) 100%)" }}
@@ -73,7 +108,7 @@ export default function Hero({
       </div>
 
       <div className="relative flex-1 flex items-center max-w-6xl mx-auto w-full px-5 py-8">
-        <div className="grid lg:grid-cols-[1fr_400px] gap-14 items-center w-full">
+        <div className="grid lg:grid-cols-[1fr_420px] gap-10 items-center w-full">
 
           {/* ── LEFT: Editorial headline ── */}
           <div>
@@ -109,7 +144,7 @@ export default function Hero({
                 Trophy.
               </span>
               <span className="block" style={{ color: "var(--text-primary)" }}>Every</span>
-              <span className="block" style={{ color: "var(--text-faint)" }}>
+              <span className="block" style={{ color: "var(--text-muted)" }}>
                 Champion.
               </span>
             </h1>
@@ -126,7 +161,7 @@ export default function Hero({
             {/* CTAs */}
             <div className="mt-6 flex items-center gap-4 flex-wrap">
               <a
-                href="#tournaments"
+                href="/tournaments/international/men"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-black transition-all"
                 style={{
                   background: "linear-gradient(135deg, #F5A623, #FFD166)",
@@ -134,179 +169,53 @@ export default function Hero({
                 }}
               >
                 Browse Tournaments
-                <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <svg aria-hidden="true" width="14" height="14" viewBox="0 0 14 14" fill="none">
                   <path d="M2 7h10M8 3l4 4-4 4" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
               <a
-                href="#records"
+                href="/timeline/all/all"
                 className="hero-link inline-flex items-center gap-2 text-sm font-medium"
               >
-                View Records
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                View Timeline
+                <svg aria-hidden="true" width="12" height="12" viewBox="0 0 12 12" fill="none">
                   <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round" />
                 </svg>
               </a>
             </div>
-
-            {/* Quick stats row */}
-            {/* <div
-              className="mt-12 pt-8 flex items-center gap-8 flex-wrap"
-              style={{ borderTop: "1px solid var(--border)" }}
-            >
-              {[
-                { value: menCount, label: "Men's" },
-                { value: womenCount, label: "Women's" },
-                { value: totalEditions, label: "Editions played" },
-              ].map(({ value, label }) => (
-                <div key={label}>
-                  <p
-                    className="font-display font-bold"
-                    style={{ fontSize: "1.75rem", lineHeight: 1 }}
-                  >
-                    {value}
-                  </p>
-                  <p className="text-[11px] mt-1" style={{ color: "rgba(255,255,255,0.3)" }}>
-                    {label}
-                  </p>
-                </div>
-              ))}
-            </div> */}
           </div>
 
-          {/* ── RIGHT: Bento stats panel ── */}
-          <div className="hidden lg:grid grid-cols-2 gap-2 auto-rows-auto">
+          {/* ── RIGHT: Current Champions ── */}
+          <div className="hidden lg:flex flex-col gap-10">
 
-            {/* Featured: latest champion – full width */}
-            <BentoCard className="col-span-2">
-              <div
-                className="absolute inset-0 rounded-2xl opacity-40"
-                style={{
-                  background:
-                    "linear-gradient(135deg, rgba(245,166,35,0.15) 0%, transparent 60%)",
-                }}
-              />
-              <div className="relative">
-                <div className="flex items-center justify-between mb-4">
-                  <span
-                    className="text-[10px] font-semibold uppercase tracking-[0.18em]"
-                    style={{
-                      color: "rgba(245,166,35,0.7)",
-                      fontFamily: "var(--font-geist-mono)",
-                    }}
-                  >
-                    Latest Champion
-                  </span>
-                  <span
-                    className="flex items-center gap-1.5 text-[10px] px-2 py-0.5 rounded-full border"
-                    style={{
-                      color: "rgba(245,166,35,0.6)",
-                      borderColor: "rgba(245,166,35,0.2)",
-                      background: "rgba(245,166,35,0.06)",
-                    }}
-                  >
-                    <span className="w-1 h-1 rounded-full bg-amber-400 inline-block" />
-                    {latestTrophy.currentChampionYear}
-                  </span>
-                </div>
-                <div className="flex items-end justify-between">
-                  <div>
-                    <p
-                      className="font-display font-bold leading-none flex items-center gap-2"
-                      style={{ fontSize: "2rem", color: "var(--text-primary)" }}
-                    >
-                      <FlagDisplay team={latestTrophy.currentChampion} size={26} />
-                      {latestTrophy.currentChampion}
-                    </p>
-                    <p className="mt-1.5 text-sm" style={{ color: "var(--text-dim)" }}>
-                      {latestTrophy.shortName}
-                    </p>
-                  </div>
-                </div>
+            {/* Men's */}
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] mb-2.5"
+                style={{ color: "var(--text-amber)", fontFamily: "var(--font-geist-mono)" }}>
+                Men&apos;s
+              </p>
+              <div className="grid grid-cols-2 gap-2.5">
+                {menCards.map(({ trophy, current, accent, format }) => (
+                  <ChampionCard key={trophy.id} trophy={trophy} current={current} accent={accent} format={format} />
+                ))}
               </div>
-            </BentoCard>
+            </div>
 
-            {/* Stat: total editions */}
-            <BentoCard>
-              <p
-                className="text-[10px] uppercase tracking-widest mb-3"
-                style={{ color: "var(--text-muted)", fontFamily: "var(--font-geist-mono)" }}
-              >
-                Editions
+            {/* Women's */}
+            <div>
+              <p className="text-sm font-bold uppercase tracking-[0.18em] mb-2.5"
+                style={{ color: "rgba(236,72,153,0.85)", fontFamily: "var(--font-geist-mono)" }}>
+                Women&apos;s
               </p>
-              <p
-                className="font-display font-bold"
-                style={{ fontSize: "2.6rem", lineHeight: 1, color: "var(--text-primary)" }}
-              >
-                {totalEditions}
-              </p>
-              <p className="text-[11px] mt-2" style={{ color: "var(--text-faint)" }}>
-                Total played
-              </p>
-            </BentoCard>
-
-            {/* Stat: most titles */}
-            <BentoCard>
-              <p
-                className="text-[10px] uppercase tracking-widest mb-3"
-                style={{ color: "var(--text-muted)", fontFamily: "var(--font-geist-mono)" }}
-              >
-                Most titles
-              </p>
-              <p
-                className="font-display font-bold"
-                style={{ fontSize: "2.6rem", lineHeight: 1, color: "#F5A623" }}
-              >
-                {dominantStat.count}×
-              </p>
-              <p className="text-[11px] mt-2 leading-snug inline-flex flex-col gap-0.5" style={{ color: "var(--text-faint)" }}>
-                <span className="inline-flex items-center gap-1">
-                  <FlagDisplay team={dominantStat.team} size={13} />
-                  {dominantStat.team}
-                </span>
-                <span>{dominantStat.tournament}</span>
-              </p>
-            </BentoCard>
-
-            {/* Tournaments count */}
-            <BentoCard>
-              <p
-                className="text-[10px] uppercase tracking-widest mb-3"
-                style={{ color: "var(--text-muted)", fontFamily: "var(--font-geist-mono)" }}
-              >
-                Tournaments
-              </p>
-              <p
-                className="font-display font-bold"
-                style={{ fontSize: "2.6rem", lineHeight: 1, color: "var(--text-primary)" }}
-              >
-                {menCount + womenCount}
-              </p>
-              <p className="text-[11px] mt-2" style={{ color: "var(--text-faint)" }}>
-                ICC events tracked
-              </p>
-            </BentoCard>
-
-            {/* Year since */}
-            <BentoCard>
-              <p
-                className="text-[10px] uppercase tracking-widest mb-3"
-                style={{ color: "var(--text-muted)", fontFamily: "var(--font-geist-mono)" }}
-              >
-                Est.
-              </p>
-              <p
-                className="font-display font-bold"
-                style={{ fontSize: "2.6rem", lineHeight: 1, color: "var(--text-primary)" }}
-              >
-                1973
-              </p>
-              <p className="text-[11px] mt-2" style={{ color: "var(--text-faint)" }}>
-                First World Cup
-              </p>
-            </BentoCard>
+              <div className="grid grid-cols-2 gap-2.5">
+                {womenCards.map(({ trophy, current, accent, format }) => (
+                  <ChampionCard key={trophy.id} trophy={trophy} current={current} accent={accent} format={format} />
+                ))}
+              </div>
+            </div>
 
           </div>
+
         </div>
       </div>
 

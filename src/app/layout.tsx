@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono, Syne } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,10 +20,38 @@ const syne = Syne({
   weight: ["700", "800"],
 });
 
+const BASE = process.env.NEXT_PUBLIC_BASE_URL ?? "https://cricvault.app";
+
 export const metadata: Metadata = {
-  title: "CricVault — Every Trophy. Every Champion.",
+  title: {
+    default: "CricVault — Every Trophy. Every Champion.",
+    template: "%s — CricVault",
+  },
   description:
-    "The definitive record of ICC cricket tournaments — men's, women's, international and domestic. Decades of history in one place.",
+    "The definitive record of every ICC trophy — Cricket World Cup, T20 World Cup, Champions Trophy, World Test Championship and more. Track every champion since 1975.",
+  metadataBase: new URL(BASE),
+  openGraph: {
+    siteName: "CricVault",
+    type: "website",
+    locale: "en_US",
+    images: [
+      {
+        url: "/opengraph-image",
+        width: 1200,
+        height: 630,
+        alt: "CricVault — Every Trophy. Every Champion.",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    site: "@cricvault",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large" },
+  },
 };
 
 export default function RootLayout({
@@ -43,6 +72,7 @@ export default function RootLayout({
         ` }} />
         <Header />
         {children}
+        <Footer />
       </body>
     </html>
   );

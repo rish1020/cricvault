@@ -1,4 +1,4 @@
-import { FLAG_COMPONENTS, GenericFlag } from "@/components/flags";
+import { FLAG_MAP, GenericFlag } from "@/lib/flagConfig";
 
 export default function FlagDisplay({
   team,
@@ -9,8 +9,8 @@ export default function FlagDisplay({
 }) {
   // Handle shared title
   if (team === "India / Sri Lanka") {
-    const FlagA = FLAG_COMPONENTS["India"];
-    const FlagB = FLAG_COMPONENTS["Sri Lanka"];
+    const FlagA = FLAG_MAP["India"];
+    const FlagB = FLAG_MAP["Sri Lanka"];
     return (
       <span style={{ display: "inline-flex", alignItems: "center", gap: 3 }}>
         <FlagA size={size} />
@@ -19,7 +19,7 @@ export default function FlagDisplay({
     );
   }
 
-  const FlagComp = FLAG_COMPONENTS[team];
+  const FlagComp = FLAG_MAP[team];
   if (FlagComp) return <FlagComp size={size} />;
 
   return <GenericFlag team={team} size={size} />;

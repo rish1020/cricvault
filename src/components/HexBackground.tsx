@@ -17,8 +17,8 @@ function pts(cx: number, cy: number, r: number) {
 }
 
 export default function HexBackground({
-  cols = 30,
-  rows = 14,
+  cols = 44,
+  rows = 18,
   opacity = 1,
 }: {
   cols?: number;
@@ -43,7 +43,7 @@ export default function HexBackground({
     <svg
       className="absolute inset-0 w-full h-full pointer-events-none"
       viewBox={`0 0 ${svgW.toFixed(0)} ${svgH.toFixed(0)}`}
-      preserveAspectRatio="xMidYMid slice"
+      preserveAspectRatio="xMinYMin slice"
       aria-hidden
       style={{ opacity }}
     >
@@ -61,7 +61,6 @@ export default function HexBackground({
           fill: rgba(245,166,35,0.22);
           transform: scale(1.18) translateY(-6px);
           filter: drop-shadow(0 8px 20px rgba(245,166,35,0.45));
-          cursor: default !important;
         }
       `}</style>
       {hexes.map(({ id, cx, cy }) => (
