@@ -10,7 +10,7 @@ import FlagDisplay from "@/components/FlagDisplay";
 function IntlCard({ trophy }: { trophy: Trophy }) {
   return (
     <Link
-      href={`/trophy/${trophy.id}`}
+      href={`/tournaments/international/${trophy.gender}/${trophy.id}`}
       className="group relative rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1"
       style={{
         background: "var(--bg-card)",
@@ -101,7 +101,7 @@ function IntlCard({ trophy }: { trophy: Trophy }) {
 function DomCard({ trophy }: { trophy: DomesticTrophy }) {
   return (
     <Link
-      href={`/domestic/${trophy.id}`}
+      href={`/tournaments/domestic/${trophy.gender}/${trophy.id}`}
       className="group relative rounded-2xl overflow-hidden flex flex-col transition-all duration-300 hover:-translate-y-1"
       style={{
         background: "var(--bg-card)",

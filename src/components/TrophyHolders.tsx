@@ -120,7 +120,7 @@ function HoldersTable({ ids, label }: { ids: string[]; label: string }) {
                 return (
                   <Link
                     key={trophy.id}
-                    href={`/trophy/${trophy.id}`}
+                    href={`/tournaments/international/${trophy.gender}/${trophy.id}`}
                     className="hover-row group flex items-center gap-2.5 px-4 py-3 transition-colors"
                     style={{
                       borderRight: colIdx < cols.length - 1

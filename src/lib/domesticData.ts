@@ -12,6 +12,7 @@ export type DomesticTrophy = {
   shortName: string;
   format: string;
   league: string;
+  gender: "men" | "women";
   description: string;
   firstEdition: number;
   frequency: string;
@@ -80,6 +81,7 @@ export const domesticTrophies: DomesticTrophy[] = [
     shortName: "IPL",
     format: "T20",
     league: "India",
+    gender: "men",
     description:
       "The world's most watched T20 cricket league. Eight franchises battle across two months in a high-octane spectacle combining world-class cricket with entertainment.",
     firstEdition: 2008,
@@ -113,6 +115,7 @@ export const domesticTrophies: DomesticTrophy[] = [
     shortName: "BBL",
     format: "T20",
     league: "Australia",
+    gender: "men",
     description: "Australia's premier domestic T20 competition featuring eight city-based franchises. Known for its family-friendly atmosphere and high-scoring entertainment.",
     firstEdition: 2012,
     frequency: "Annual",
@@ -141,6 +144,7 @@ export const domesticTrophies: DomesticTrophy[] = [
     shortName: "PSL",
     format: "T20",
     league: "Pakistan",
+    gender: "men",
     description: "Pakistan's elite T20 franchise league, launched in 2016. A platform for Pakistan's cricketing talent to shine alongside international stars in high-pressure contests.",
     firstEdition: 2016,
     frequency: "Annual",
@@ -165,6 +169,7 @@ export const domesticTrophies: DomesticTrophy[] = [
     shortName: "The Hundred",
     format: "100-ball",
     league: "England",
+    gender: "men",
     description: "England's bold 100-ball format competition launched in 2021, designed to attract new audiences with a faster, city-franchise based game featuring the world's best players.",
     firstEdition: 2021,
     frequency: "Annual",
@@ -184,6 +189,7 @@ export const domesticTrophies: DomesticTrophy[] = [
     shortName: "CPL",
     format: "T20",
     league: "Caribbean",
+    gender: "men",
     description: "The biggest party in sport. The Caribbean Premier League combines world-class T20 cricket with the vibrant culture of the Caribbean, featuring six franchise teams.",
     firstEdition: 2013,
     frequency: "Annual",
@@ -203,6 +209,52 @@ export const domesticTrophies: DomesticTrophy[] = [
       { year: 2015, champion: "Trinbago Knight Riders",     runnerUp: "Barbados Tridents",         venue: "Queen's Park Oval, Trinidad",                  final: "Trinbago Knight Riders beat Barbados Tridents by 20 runs" },
       { year: 2014, champion: "Barbados Tridents",          runnerUp: "Trinidad & Tobago Red Steel", venue: "Kensington Oval, Barbados",                 final: "Barbados Tridents beat Trinidad & Tobago Red Steel by 3 wickets" },
       { year: 2013, champion: "Jamaican Tallawahs",         runnerUp: "Guyana Amazon Warriors",    venue: "Sabina Park, Jamaica",                         final: "Jamaican Tallawahs beat Guyana Amazon Warriors by 5 wickets" },
+    ],
+  },
+  {
+    id: "wbbl",
+    name: "Women's Big Bash League",
+    shortName: "WBBL",
+    format: "T20",
+    league: "Australia",
+    gender: "women",
+    description: "Australia's premier women's T20 franchise competition. Eight city-based teams compete in a high-quality tournament that has helped grow women's cricket globally.",
+    firstEdition: 2015,
+    frequency: "Annual",
+    currentChampion: "Brisbane Heat",
+    currentChampionYear: 2024,
+    color: "from-pink-500 to-rose-600",
+    winners: [
+      { year: 2024, champion: "Brisbane Heat",      runnerUp: "Perth Scorchers",    venue: "Optus Stadium, Perth",        final: "Brisbane Heat beat Perth Scorchers by 5 wickets" },
+      { year: 2023, champion: "Sydney Thunder",      runnerUp: "Melbourne Stars",    venue: "SCG, Sydney",                 final: "Sydney Thunder beat Melbourne Stars by 8 wickets" },
+      { year: 2022, champion: "Perth Scorchers",     runnerUp: "Brisbane Heat",      venue: "Optus Stadium, Perth",        final: "Perth Scorchers beat Brisbane Heat by 6 wickets" },
+      { year: 2021, champion: "Sydney Sixers",       runnerUp: "Perth Scorchers",    venue: "SCG, Sydney",                 final: "Sydney Sixers beat Perth Scorchers by 12 runs" },
+      { year: 2020, champion: "Melbourne Stars",     runnerUp: "Adelaide Strikers",  venue: "Junction Oval, Melbourne",    final: "Melbourne Stars beat Adelaide Strikers by 7 wickets" },
+      { year: 2019, champion: "Melbourne Stars",     runnerUp: "Sydney Sixers",      venue: "Junction Oval, Melbourne",    final: "Melbourne Stars beat Sydney Sixers by 6 runs" },
+      { year: 2018, champion: "Sydney Sixers",       runnerUp: "Melbourne Stars",    venue: "SCG, Sydney",                 final: "Sydney Sixers beat Melbourne Stars by 8 wickets" },
+      { year: 2017, champion: "Perth Scorchers",     runnerUp: "Brisbane Heat",      venue: "WACA, Perth",                 final: "Perth Scorchers beat Brisbane Heat by 3 wickets" },
+      { year: 2016, champion: "Sydney Sixers",       runnerUp: "Melbourne Renegades", venue: "SCG, Sydney",               final: "Sydney Sixers beat Melbourne Renegades by 9 runs" },
+      { year: 2015, champion: "Sydney Sixers",       runnerUp: "Adelaide Strikers",  venue: "SCG, Sydney",                 final: "Sydney Sixers beat Adelaide Strikers by 6 wickets" },
+    ],
+  },
+  {
+    id: "the-hundred-women",
+    name: "The Hundred (Women's)",
+    shortName: "The Hundred (W)",
+    format: "100-ball",
+    league: "England",
+    gender: "women",
+    description: "The women's edition of England's 100-ball format competition. Launched alongside the men's tournament in 2021, it has rapidly elevated the profile of women's cricket in England.",
+    firstEdition: 2021,
+    frequency: "Annual",
+    currentChampion: "Southern Brave",
+    currentChampionYear: 2024,
+    color: "from-fuchsia-500 to-pink-700",
+    winners: [
+      { year: 2024, champion: "Southern Brave",      runnerUp: "Oval Invincibles",     venue: "Lord's, London",             final: "Southern Brave beat Oval Invincibles by 6 wickets" },
+      { year: 2023, champion: "Oval Invincibles",    runnerUp: "Southern Brave",       venue: "Lord's, London",             final: "Oval Invincibles beat Southern Brave by 11 runs" },
+      { year: 2022, champion: "Oval Invincibles",    runnerUp: "Trent Rockets",        venue: "Lord's, London",             final: "Oval Invincibles beat Trent Rockets by 7 wickets" },
+      { year: 2021, champion: "Oval Invincibles",    runnerUp: "Southern Brave",       venue: "Lord's, London",             final: "Oval Invincibles beat Southern Brave by 8 wickets" },
     ],
   },
 ];
