@@ -40,7 +40,7 @@ export default function Header() {
   const [open, setOpen] = useState(false);
 
   const isActive = (href: string) => {
-    if (href === "/tournaments") return pathname === "/tournaments" || pathname.startsWith("/trophy/") || pathname.startsWith("/domestic");
+    if (href === "/tournaments") return pathname.startsWith("/tournaments") || pathname.startsWith("/trophy/") || pathname.startsWith("/domestic");
     return pathname === href;
   };
 
