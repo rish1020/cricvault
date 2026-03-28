@@ -84,29 +84,6 @@ export default function Header() {
           <div className="flex items-center gap-2">
             <ThemeToggle />
             <CursorPicker />
-            <button
-              className="hidden sm:flex items-center gap-2 h-8 px-3 rounded-lg border text-[12px] transition-all"
-              style={{
-                background: "var(--bg-input)",
-                borderColor: "var(--border)",
-                color: "var(--text-muted)",
-              }}
-            >
-              <svg width="13" height="13" viewBox="0 0 13 13" fill="none">
-                <circle cx="5.5" cy="5.5" r="4.5" stroke="currentColor" strokeWidth="1.3" />
-                <path d="M9 9l2.5 2.5" stroke="currentColor" strokeWidth="1.3" strokeLinecap="round" />
-              </svg>
-              <span className="hidden lg:block">Search</span>
-              <kbd
-                className="hidden lg:block ml-1 text-[10px] px-1 py-0.5 rounded"
-                style={{ color: "var(--text-muted)", background: "var(--bg-subtle)" }}
-              >
-                ⌘K
-              </kbd>
-            </button>
-            <button className="h-8 px-3.5 rounded-lg bg-amber-400 hover:bg-amber-300 text-black text-[12px] font-bold transition-colors">
-              Sign up
-            </button>
 
             {/* Mobile toggle */}
             <button

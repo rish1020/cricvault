@@ -4,10 +4,10 @@ import { useState, useEffect, useRef } from "react";
 
 type CursorMode = "default" | "ball" | "bat";
 
-const OPTIONS: { id: CursorMode; label: string; emoji: string }[] = [
-  { id: "default", label: "Default", emoji: "🖱️" },
-  { id: "ball",    label: "Ball",    emoji: "🔴" },
-  { id: "bat",     label: "Bat",     emoji: "🏏" },
+const OPTIONS: { id: CursorMode; label: string; symbol: string }[] = [
+  { id: "default", label: "Default", symbol: "🖱️" },
+  { id: "ball",    label: "●",       symbol: "🔴" },
+  { id: "bat",     label: "🏏",      symbol: "🏏" },
 ];
 
 export default function CursorPicker() {
@@ -56,8 +56,8 @@ export default function CursorPicker() {
         }}
         title="Change cursor"
       >
-        <span>{current.emoji}</span>
-        <span className="hidden lg:block">{current.label}</span>
+        <span className="text-sm leading-none">{current.symbol}</span>
+        <span className="hidden lg:block text-[12px]">Cursor</span>
         <svg
           width="10" height="10" viewBox="0 0 10 10" fill="none"
           className={`transition-transform duration-150 ${open ? "rotate-180" : ""}`}
@@ -90,8 +90,8 @@ export default function CursorPicker() {
                 onMouseEnter={(e) => { if (!active) (e.currentTarget as HTMLElement).style.background = "var(--bg-input)"; }}
                 onMouseLeave={(e) => { if (!active) (e.currentTarget as HTMLElement).style.background = "transparent"; }}
               >
-                <span className="text-base leading-none">{opt.emoji}</span>
-                <span className="font-medium">{opt.label}</span>
+                <span className="text-base leading-none">{opt.symbol}</span>
+                <span className="font-medium">{opt.id === "default" ? "Default" : opt.label}</span>
                 {active && (
                   <svg className="ml-auto" width="12" height="12" viewBox="0 0 12 12" fill="none">
                     <path d="M2 6l3 3 5-5" stroke="#F5A623" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
