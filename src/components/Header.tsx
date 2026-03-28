@@ -41,6 +41,7 @@ export default function Header() {
 
   const isActive = (href: string) => {
     if (href === "/tournaments") return pathname.startsWith("/tournaments") || pathname.startsWith("/trophy/") || pathname.startsWith("/domestic");
+    if (href === "/timeline") return pathname.startsWith("/timeline");
     return pathname === href;
   };
 

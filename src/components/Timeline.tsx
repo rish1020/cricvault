@@ -1,22 +1,33 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useRouter } from "next/navigation";
+import { useMemo } from "react";
 import type { Trophy } from "@/lib/data";
 import FlagDisplay from "@/components/FlagDisplay";
+import { teamToSlug } from "@/lib/teamSlug";
 
 type Entry = {
   year: number;
   champion: string;
   runnerUp: string;
   tournament: string;
-  shortColor: string; // Tailwind from-* to-* classes
+  shortColor: string;
   gender: "men" | "women";
   final?: string;
 };
 
-export default function Timeline({ trophies }: { trophies: Trophy[] }) {
-  const [filterTeam, setFilterTeam] = useState<string | null>(null);
-  const [filterGender, setFilterGender] = useState<"all" | "men" | "women">("all");
+type Gender = "all" | "men" | "women";
+
+export default function Timeline({
+  trophies,
+  gender,
+  team,
+}: {
+  trophies: Trophy[];
+  gender: Gender;
+  team: string | null; // null means "all teams"
+}) {
+  const router = useRouter();
 
   /* ── Flatten all winners ── */
   const all = useMemo<Entry[]>(() => {
@@ -24,34 +35,34 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
     for (const t of trophies) {
       for (const w of t.winners) {
         entries.push({
-          year: w.year,
-          champion: w.champion,
-          runnerUp: w.runnerUp,
-          tournament: t.shortName,
-          shortColor: t.color,
-          gender: t.gender,
-          final: w.final,
+          year:        w.year,
+          champion:    w.champion,
+          runnerUp:    w.runnerUp,
+          tournament:  t.shortName,
+          shortColor:  t.color,
+          gender:      t.gender,
+          final:       w.final,
         });
       }
     }
     return entries.sort((a, b) => b.year - a.year || a.tournament.localeCompare(b.tournament));
   }, [trophies]);
 
-  /* ── Unique champions for filter pills ── */
+  /* ── Unique champions for the current gender filter ── */
   const teams = useMemo(() => {
-    const set = new Set(all.map((e) => e.champion));
-    return Array.from(set).sort();
-  }, [all]);
+    const src = gender === "all" ? all : all.filter((e) => e.gender === gender);
+    return Array.from(new Set(src.map((e) => e.champion))).sort();
+  }, [all, gender]);
 
-  /* ── Apply filters ── */
+  /* ── Apply both filters ── */
   const filtered = useMemo(
     () =>
       all.filter(
         (e) =>
-          (filterGender === "all" || e.gender === filterGender) &&
-          (!filterTeam || e.champion === filterTeam)
+          (gender === "all" || e.gender === gender) &&
+          (!team || e.champion === team)
       ),
-    [all, filterTeam, filterGender]
+    [all, gender, team]
   );
 
   /* ── Group by year ── */
@@ -64,12 +75,31 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
     return Array.from(map.entries()).sort(([a], [b]) => b - a);
   }, [filtered]);
 
+  /* ── Navigation helpers ── */
+  function navigate(newGender: Gender, newTeam: string | null) {
+    const teamSlug = newTeam ? teamToSlug(newTeam) : "all";
+    router.push(`/timeline/${newGender}/${teamSlug}`);
+  }
+
+  function selectGender(g: Gender) {
+    // When switching gender, reset team if it doesn't exist in new gender
+    const nextTeams = g === "all"
+      ? all
+      : all.filter((e) => e.gender === g);
+    const teamStillValid = team && nextTeams.some((e) => e.champion === team);
+    navigate(g, teamStillValid ? team : null);
+  }
+
+  function selectTeam(t: string | null) {
+    navigate(gender, t);
+  }
+
   const pill =
     "inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold border transition-all duration-150";
 
   return (
     <section id="timeline" className="max-w-6xl mx-auto px-5 py-16">
-      {/* Header */}
+      {/* ── Header ── */}
       <div className="flex items-end justify-between mb-8 flex-wrap gap-4">
         <div>
           <p
@@ -78,12 +108,15 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
           >
             All-time
           </p>
-          <h2 className="font-display font-bold text-2xl tracking-tight" style={{ color: "var(--text-primary)" }}>
+          <h2
+            className="font-display font-bold text-2xl tracking-tight"
+            style={{ color: "var(--text-primary)" }}
+          >
             Winners Timeline
           </h2>
           <p className="text-[12px] mt-1" style={{ color: "var(--text-muted)" }}>
             {filtered.length} result{filtered.length !== 1 ? "s" : ""}
-            {filterTeam ? ` for ${filterTeam}` : ""}
+            {team ? ` for ${team}` : ""}
           </p>
         </div>
 
@@ -95,12 +128,12 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
           {(["all", "men", "women"] as const).map((g) => (
             <button
               key={g}
-              onClick={() => setFilterGender(g)}
+              onClick={() => selectGender(g)}
               className="px-3 py-1.5 rounded-lg text-xs font-semibold transition-all"
               style={{
-                background: filterGender === g ? "var(--text-primary)" : "transparent",
-                color: filterGender === g ? "var(--background)" : "var(--text-muted)",
-                boxShadow: filterGender === g ? "0 1px 4px rgba(0,0,0,0.15)" : "none",
+                background: gender === g ? "var(--text-primary)" : "transparent",
+                color:      gender === g ? "var(--background)"   : "var(--text-muted)",
+                boxShadow:  gender === g ? "0 1px 4px rgba(0,0,0,0.15)" : "none",
               }}
             >
               {g === "all" ? "All" : g === "men" ? "Men's" : "Women's"}
@@ -109,39 +142,41 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
         </div>
       </div>
 
-      {/* Team filter pills */}
+      {/* ── Team filter pills ── */}
       <div className="flex flex-wrap gap-2 mb-10">
         <button
-          onClick={() => setFilterTeam(null)}
-          className={`${pill} ${!filterTeam ? "bg-amber-400 text-black border-amber-400" : ""}`}
-          style={filterTeam !== null ? {
-            background: "transparent",
-            color: "var(--text-muted)",
-            borderColor: "var(--border-med)",
-          } : undefined}
+          onClick={() => selectTeam(null)}
+          className={`${pill} ${!team ? "bg-amber-400 text-black border-amber-400" : ""}`}
+          style={
+            team !== null
+              ? { background: "transparent", color: "var(--text-muted)", borderColor: "var(--border-med)" }
+              : undefined
+          }
         >
           All teams
         </button>
-        {teams.map((team) => (
+        {teams.map((t) => (
           <button
-            key={team}
-            onClick={() => setFilterTeam(filterTeam === team ? null : team)}
-            className={`${pill} ${filterTeam === team ? "bg-amber-400 text-black border-amber-400" : ""}`}
-            style={filterTeam !== team ? {
-              background: "transparent",
-              color: "var(--text-muted)",
-              borderColor: "var(--border-med)",
-            } : undefined}
+            key={t}
+            onClick={() => selectTeam(team === t ? null : t)}
+            className={`${pill} ${team === t ? "bg-amber-400 text-black border-amber-400" : ""}`}
+            style={
+              team !== t
+                ? { background: "transparent", color: "var(--text-muted)", borderColor: "var(--border-med)" }
+                : undefined
+            }
           >
-            <FlagDisplay team={team} size={13} />
-            {team}
+            <FlagDisplay team={t} size={13} />
+            {t}
           </button>
         ))}
       </div>
 
-      {/* Timeline body */}
+      {/* ── Timeline body ── */}
       {byYear.length === 0 ? (
-        <div className="text-center py-16 text-sm" style={{ color: "var(--text-faint)" }}>No results found.</div>
+        <div className="text-center py-16 text-sm" style={{ color: "var(--text-faint)" }}>
+          No results found.
+        </div>
       ) : (
         <div className="relative">
           {/* Vertical spine */}
@@ -164,8 +199,8 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
                   <span
                     className="w-2.5 h-2.5 rounded-full border-2 shrink-0 relative z-10"
                     style={{
-                      background: "var(--background)",
-                      borderColor: entries.length > 1 ? "#F5A623" : "var(--text-faint)",
+                      background:   "var(--background)",
+                      borderColor:  entries.length > 1 ? "#F5A623" : "var(--text-faint)",
                     }}
                   />
                   {entries.length > 1 && (
@@ -184,10 +219,7 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
                     <div
                       key={i}
                       className="group relative rounded-xl border transition-all duration-200"
-                      style={{
-                        background: "var(--bg-card)",
-                        borderColor: "var(--border)",
-                      }}
+                      style={{ background: "var(--bg-card)", borderColor: "var(--border)" }}
                       onMouseEnter={(el) => { (el.currentTarget as HTMLElement).style.borderColor = "var(--border-strong)"; }}
                       onMouseLeave={(el) => { (el.currentTarget as HTMLElement).style.borderColor = "var(--border)"; }}
                     >
@@ -205,16 +237,12 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
                           </span>
                         </div>
 
-                        {/* Divider */}
                         <span style={{ color: "var(--text-ghost)" }}>·</span>
 
                         {/* Tournament */}
                         <span
                           className="text-sm px-2 py-0.5 rounded-md"
-                          style={{
-                            color: "var(--text-secondary)",
-                            background: "var(--bg-subtle)",
-                          }}
+                          style={{ color: "var(--text-secondary)", background: "var(--bg-subtle)" }}
                         >
                           {e.tournament}
                         </span>
@@ -223,26 +251,16 @@ export default function Timeline({ trophies }: { trophies: Trophy[] }) {
                         <span
                           className="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded font-semibold"
                           style={{
-                            color:
-                              e.gender === "women"
-                                ? "rgba(217,70,239,0.7)"
-                                : "rgba(245,166,35,0.6)",
-                            background:
-                              e.gender === "women"
-                                ? "rgba(217,70,239,0.08)"
-                                : "rgba(245,166,35,0.08)",
+                            color:       e.gender === "women" ? "rgba(217,70,239,0.7)" : "rgba(245,166,35,0.6)",
+                            background:  e.gender === "women" ? "rgba(217,70,239,0.08)" : "rgba(245,166,35,0.08)",
                           }}
                         >
                           {e.gender}
                         </span>
-
                       </div>
 
                       {e.final && (
-                        <p
-                          className="px-4 pb-3 text-[11px] leading-snug"
-                          style={{ color: "var(--text-dim)" }}
-                        >
+                        <p className="px-4 pb-3 text-[11px] leading-snug" style={{ color: "var(--text-dim)" }}>
                           {e.final}
                         </p>
                       )}
