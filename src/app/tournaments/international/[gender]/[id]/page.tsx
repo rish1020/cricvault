@@ -12,24 +12,26 @@ export function generateStaticParams() {
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ gender: string; id: string }> }) {
-  const { gender, id } = await params;
+  const { id } = await params;
   const trophy = getTrophyById(id);
   if (!trophy) return {};
-  const genderLabel = gender === "men" ? "Men's" : "Women's";
-  const desc = `${trophy.description} Current champion: ${trophy.currentChampion} (${trophy.currentChampionYear}).`;
+  const yearRange = `${trophy.firstEdition}–${trophy.currentChampionYear}`;
+  const title = `${trophy.shortName} Winners List (${yearRange}) — CricVault`;
+  const desc = trophy.summary
+    ? trophy.summary.slice(0, 160)
+    : `${trophy.description} Current champion: ${trophy.currentChampion} (${trophy.currentChampionYear}).`;
   return {
-    title: `${trophy.shortName} — CricVault`,
+    title,
     description: desc,
     openGraph: {
-      title: `${trophy.name} — CricVault`,
+      title,
       description: desc,
-      url: `${BASE}/tournaments/international/${gender}/${id}`,
-      images: [{ url: `${BASE}/tournaments/international/${gender}/${id}/opengraph-image`, width: 1200, height: 630 }],
+      url: `${BASE}/tournaments/international/${trophy.gender}/${id}`,
+      images: [{ url: `${BASE}/tournaments/international/${trophy.gender}/${id}/opengraph-image`, width: 1200, height: 630 }],
     },
     twitter: { card: "summary_large_image" as const },
-    alternates: { canonical: `${BASE}/tournaments/international/${gender}/${id}` },
+    alternates: { canonical: `${BASE}/tournaments/international/${trophy.gender}/${id}` },
   };
-  void genderLabel;
 }
 
 export default async function TrophyPage({ params }: { params: Promise<{ gender: string; id: string }> }) {
@@ -291,6 +293,81 @@ export default async function TrophyPage({ params }: { params: Promise<{ gender:
         </div>
 
         </div>{/* end 3-col grid */}
+
+        {/* ── Summary + Key Facts ── */}
+        {(trophy.summary || (trophy.keyFacts && trophy.keyFacts.length > 0)) && (
+          <div className="mt-10 grid grid-cols-1 lg:grid-cols-[1fr_260px] gap-6 items-start">
+            {/* Summary */}
+            {trophy.summary && (
+              <div
+                className="rounded-2xl px-6 py-6 border"
+                style={{ background: "var(--bg-card)", borderColor: "var(--border)" }}
+              >
+                <p
+                  className="text-[10px] uppercase tracking-[0.2em] mb-3"
+                  style={{ color: "var(--text-muted)", fontFamily: "var(--font-geist-mono)" }}
+                >
+                  About this tournament
+                </p>
+                <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                  {trophy.summary}
+                </p>
+              </div>
+            )}
+
+            {/* Key Facts */}
+            {trophy.keyFacts && trophy.keyFacts.length > 0 && (
+              <div
+                className="rounded-2xl px-6 py-6 border"
+                style={{ background: "var(--bg-card)", borderColor: "var(--border)" }}
+              >
+                <p
+                  className="text-[10px] uppercase tracking-[0.2em] mb-3"
+                  style={{ color: "var(--text-muted)", fontFamily: "var(--font-geist-mono)" }}
+                >
+                  Key facts
+                </p>
+                <ul className="space-y-2">
+                  {trophy.keyFacts.map((fact, i) => (
+                    <li key={i} className="flex gap-2.5 text-sm" style={{ color: "var(--text-secondary)" }}>
+                      <span className="mt-1.5 w-1 h-1 rounded-full shrink-0" style={{ background: "var(--text-amber)" }} />
+                      {fact}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* ── FAQ ── */}
+        {trophy.faqs && trophy.faqs.length > 0 && (
+          <div className="mt-8">
+            <p
+              className="text-[10px] uppercase tracking-[0.2em] mb-4"
+              style={{ color: "var(--text-muted)", fontFamily: "var(--font-geist-mono)" }}
+            >
+              Frequently asked questions
+            </p>
+            <div className="space-y-3">
+              {trophy.faqs.map(({ q, a }, i) => (
+                <div
+                  key={i}
+                  className="rounded-2xl px-6 py-5 border"
+                  style={{ background: "var(--bg-card)", borderColor: "var(--border)" }}
+                >
+                  <p className="font-semibold text-sm mb-2" style={{ color: "var(--text-primary)" }}>
+                    {q}
+                  </p>
+                  <p className="text-sm leading-relaxed" style={{ color: "var(--text-secondary)" }}>
+                    {a}
+                  </p>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+
       </div>
 
     </main>
