@@ -126,10 +126,10 @@ export default function AboutPage() {
                 cta: "Open timeline →",
               },
               {
-                title: "Trophy cabinet",
+                title: "Trophy Room",
                 desc: "Medal-table ranking by country. Click any nation to see every trophy they've won across all formats.",
                 href: "/cabinet/all/all",
-                cta: "View cabinet →",
+                cta: "View Trophy Room →",
               },
               {
                 title: "Current champions",

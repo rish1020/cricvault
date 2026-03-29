@@ -326,6 +326,20 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
               </div>
             </div>
 
+            {/* View Timeline action */}
+            <div className="flex justify-end mb-5 -mt-3">
+              <Link
+                href={`/timeline/${gender}/${teamToSlug(country)}`}
+                className="back-link inline-flex items-center gap-1.5 text-[12px] font-semibold transition-colors"
+                style={{ color: "var(--text-muted)" }}
+              >
+                View Timeline
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+            </div>
+
             {wonTrophies.length === 0 ? (
               <p className="text-sm" style={{ color: "var(--text-faint)" }}>No ICC titles in this category.</p>
             ) : (
@@ -333,10 +347,9 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
                 {wonTrophies.map((t) => {
                   const accent = ACCENT[t.id] ?? "#888";
                   return (
-                    <Link
+                    <div
                       key={t.id}
-                      href={`/tournaments/international/${t.gender}/${t.id}`}
-                      className="trophy-card-link group rounded-2xl border overflow-hidden"
+                      className="rounded-2xl border overflow-hidden"
                       style={{
                         borderColor: t.isCurrentChampion ? `${accent}50` : "var(--border-med)",
                         background: "var(--bg-card)",
@@ -394,16 +407,8 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
                           ))}
                         </div>
 
-                        {/* View link indicator */}
-                        <div className="flex items-center gap-1 mt-1"
-                          style={{ color: "var(--text-muted)" }}>
-                          <span className="text-[10px] font-semibold uppercase tracking-wider">View tournament</span>
-                          <svg width="10" height="10" viewBox="0 0 12 12" fill="none" aria-hidden="true">
-                            <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
-                          </svg>
-                        </div>
                       </div>
-                    </Link>
+                    </div>
                   );
                 })}
               </div>

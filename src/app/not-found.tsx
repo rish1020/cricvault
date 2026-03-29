@@ -36,7 +36,7 @@ export default function NotFound() {
           { label: "Home",        href: "/" },
           { label: "Tournaments", href: "/tournaments" },
           { label: "Timeline",    href: "/timeline/all/all" },
-          { label: "Cabinet",     href: "/cabinet/all/all" },
+          { label: "Trophy Room", href: "/cabinet/all/all" },
         ].map(({ label, href }) => (
           <Link
             key={label}

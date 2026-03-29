@@ -57,11 +57,11 @@ export async function generateMetadata({
       : `ICC trophy medal table — ${genderLabel.toLowerCase()} cricket wins ranked by country across all major tournaments.`;
 
   return {
-    title: `Cabinet · ${genderLabel} · ${countryLabel} — CricVault`,
+    title: `Trophy Room · ${genderLabel} · ${countryLabel} — CricVault`,
     description,
     alternates: { canonical: url },
     openGraph: {
-      title: `Cabinet · ${genderLabel} · ${countryLabel} — CricVault`,
+      title: `Trophy Room · ${genderLabel} · ${countryLabel} — CricVault`,
       description,
       url,
     },
