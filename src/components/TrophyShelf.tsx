@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect } from "react";
 import Link from "next/link";
 import { Trophy } from "@/lib/data";
 import { teamToSlug } from "@/lib/teamSlug";
@@ -66,7 +67,7 @@ function StarRating({ count }: { count: number }) {
   );
 }
 
-/* ── Medal table (single gender section) ────────────────────────────── */
+/* ── Medal table ──────────────────────────────────────────────────────── */
 function MedalTable({
   trophies,
   countries,
@@ -129,7 +130,6 @@ function MedalTable({
               return (
                 <tr key={row.country}
                   style={{ borderBottom: i < rows.length - 1 ? "1px solid var(--border-faint)" : undefined }}>
-                  {/* Rank */}
                   <td className="px-4 py-3.5 sticky left-0 z-10" style={{ background: "var(--bg-card)" }}>
                     {rankStyle ? (
                       <span className="inline-flex items-center justify-center w-6 h-6 rounded-full text-xs font-black"
@@ -140,7 +140,6 @@ function MedalTable({
                       <span className="text-xs font-semibold" style={{ color: "var(--text-faint)" }}>{rank}</span>
                     )}
                   </td>
-                  {/* Country */}
                   <td className="px-4 py-3.5 sticky left-10 z-10" style={{ background: "var(--bg-card)" }}>
                     <Link href={`/cabinet/${gender}/${teamToSlug(row.country)}`}
                       className="flex items-center gap-2.5 font-semibold hover:underline"
@@ -149,7 +148,6 @@ function MedalTable({
                       {row.country}
                     </Link>
                   </td>
-                  {/* Win counts */}
                   {trophies.map((t) => (
                     <td key={t.id} className="px-3 py-3.5 text-center">
                       {row.wins[t.id] ? (
@@ -162,7 +160,6 @@ function MedalTable({
                       )}
                     </td>
                   ))}
-                  {/* Total */}
                   <td className="px-5 py-3.5">
                     <div className="flex flex-col items-center gap-1.5">
                       <span className="font-black text-base" style={{ color: "#F5A623" }}>{row.total}</span>
@@ -177,6 +174,116 @@ function MedalTable({
             })}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+}
+
+/* ── Trophy card ──────────────────────────────────────────────────────── */
+function TrophyCard({
+  t,
+}: {
+  t: Trophy & { countryWins: { year: number; champion: string; runnerUp: string; venue: string; final?: string }[]; isCurrentChampion: boolean };
+}) {
+  const accent = ACCENT[t.id] ?? "#888";
+  const lastWin = t.countryWins[0];
+
+  return (
+    <div
+      className="rounded-2xl border overflow-hidden flex flex-col"
+      style={{
+        borderColor: t.isCurrentChampion ? `${accent}60` : "var(--border-med)",
+        background: "var(--bg-card)",
+        boxShadow: t.isCurrentChampion
+          ? `0 0 0 1px ${accent}30, 0 8px 32px ${accent}18`
+          : "0 1px 4px rgba(0,0,0,0.04)",
+      }}
+    >
+      {/* ── Colored header ── */}
+      <div
+        className="px-5 pt-4 pb-4 relative overflow-hidden"
+        style={{
+          background: `linear-gradient(135deg, ${accent}22 0%, ${accent}0a 100%)`,
+          borderBottom: `1px solid ${accent}20`,
+        }}
+      >
+        {/* ambient glow */}
+        <div
+          className="absolute -top-6 -right-6 w-24 h-24 rounded-full pointer-events-none"
+          style={{ background: accent, opacity: 0.12, filter: "blur(20px)" }}
+        />
+
+        <div className="relative flex items-start justify-between gap-2">
+          <div className="min-w-0">
+            <span
+              className="text-[9px] font-mono font-bold uppercase tracking-widest block mb-1"
+              style={{ color: accent }}
+            >
+              {t.format}
+            </span>
+            <h3
+              className="font-bold text-[15px] leading-snug"
+              style={{ color: "var(--text-primary)" }}
+            >
+              {t.shortName}
+            </h3>
+          </div>
+          {t.isCurrentChampion && (
+            <span
+              className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-md text-[9px] font-bold uppercase tracking-wide shrink-0"
+              style={{ background: `${accent}22`, color: accent, border: `1px solid ${accent}30` }}
+            >
+              <StarIcon size={8} />
+              Defending
+            </span>
+          )}
+        </div>
+      </div>
+
+      {/* ── Body ── */}
+      <div className="px-5 py-4 flex flex-col gap-3 flex-1">
+        {/* Stats row */}
+        <div className="flex items-end justify-between">
+          <div>
+            <span
+              className="font-black font-display leading-none block"
+              style={{ fontSize: 40, color: accent, lineHeight: 1 }}
+            >
+              {t.countryWins.length}
+            </span>
+            <span
+              className="text-[9px] font-mono uppercase tracking-widest mt-0.5 block"
+              style={{ color: "var(--text-dim)" }}
+            >
+              {t.countryWins.length === 1 ? "title" : "titles"}
+            </span>
+          </div>
+
+          <div className="text-right">
+            <span className="text-[13px] font-bold block" style={{ color: "var(--text-primary)" }}>
+              {lastWin.year}
+            </span>
+            <span className="text-[9px] font-mono uppercase tracking-wider" style={{ color: "var(--text-dim)" }}>
+              last won
+            </span>
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="h-px" style={{ background: "var(--border-faint)" }} />
+
+        {/* Year pills — accent-tinted */}
+        <div className="flex flex-wrap gap-1.5">
+          {t.countryWins.map((w) => (
+            <span
+              key={w.year}
+              className="px-2 py-0.5 text-[10px] rounded-md tabular-nums font-mono font-semibold"
+              style={{ background: `${accent}14`, color: accent }}
+            >
+              {w.year}
+            </span>
+          ))}
+        </div>
       </div>
     </div>
   );
@@ -216,6 +323,15 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
   const menTrophies   = trophies.filter((t) => t.gender === "men");
   const womenTrophies = trophies.filter((t) => t.gender === "women");
 
+  // Persist the last visited Trophy Room path to localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem("trophy-room-last", `/cabinet/${gender}/${countrySlug}`);
+    } catch {
+      // ignore – private browsing / storage quota
+    }
+  }, [gender, countrySlug]);
+
   return (
     <>
       <style>{`
@@ -224,8 +340,6 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
           50% { opacity: calc(var(--star-base-opacity) * 1.6); transform: scale(1.18) rotate(15deg); }
         }
         .cabinet-star { animation: twinkle 3s ease-in-out infinite; }
-        .trophy-card-link { transition: transform 0.18s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.2s ease, border-color 0.2s ease; }
-        .trophy-card-link:hover { transform: translateY(-2px); }
       `}</style>
 
       <div className="max-w-6xl mx-auto px-5 pt-12 pb-20">
@@ -278,23 +392,39 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
           ))}
         </div>
 
-        {/* ── Medal tables (all nations) ── */}
+        {/* ── Medal tables (all nations) + View Timeline ── */}
         {!country && (
-          gender === "all" ? (
-            <>
-              <MedalTable trophies={menTrophies}   countries={allCountries} gender={gender} label="Men's" />
-              <MedalTable trophies={womenTrophies} countries={allCountries} gender={gender} label="Women's" />
-            </>
-          ) : (
-            <MedalTable trophies={filteredTrophies} countries={allCountries} gender={gender} />
-          )
+          <>
+            {/* View Timeline for all nations */}
+            <div className="flex justify-end mb-5">
+              <Link
+                href={`/timeline/${gender}/all`}
+                className="back-link inline-flex items-center gap-1.5 text-[12px] font-semibold transition-colors"
+                style={{ color: "var(--text-muted)" }}
+              >
+                View Timeline
+                <svg width="11" height="11" viewBox="0 0 12 12" fill="none" aria-hidden="true">
+                  <path d="M2 6h8M6 2l4 4-4 4" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </Link>
+            </div>
+
+            {gender === "all" ? (
+              <>
+                <MedalTable trophies={menTrophies}   countries={allCountries} gender={gender} label="Men's" />
+                <MedalTable trophies={womenTrophies} countries={allCountries} gender={gender} label="Women's" />
+              </>
+            ) : (
+              <MedalTable trophies={filteredTrophies} countries={allCountries} gender={gender} />
+            )}
+          </>
         )}
 
         {/* ── Trophy shelf (country selected) ── */}
         {country && (
           <div>
             {/* Country hero */}
-            <div className="flex items-center gap-5 mb-8 p-6 rounded-2xl border relative overflow-hidden"
+            <div className="flex items-center gap-5 mb-5 p-6 rounded-2xl border relative overflow-hidden"
               style={{ borderColor: "var(--border-med)", background: "var(--bg-card)" }}>
               <div className="absolute left-0 top-0 w-48 h-full pointer-events-none"
                 style={{ background: "radial-gradient(ellipse at left center, rgba(245,166,35,0.07) 0%, transparent 70%)" }} />
@@ -327,7 +457,7 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
             </div>
 
             {/* View Timeline action */}
-            <div className="flex justify-end mb-5 -mt-3">
+            <div className="flex justify-end mb-5">
               <Link
                 href={`/timeline/${gender}/${teamToSlug(country)}`}
                 className="back-link inline-flex items-center gap-1.5 text-[12px] font-semibold transition-colors"
@@ -344,73 +474,9 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
               <p className="text-sm" style={{ color: "var(--text-faint)" }}>No ICC titles in this category.</p>
             ) : (
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                {wonTrophies.map((t) => {
-                  const accent = ACCENT[t.id] ?? "#888";
-                  return (
-                    <div
-                      key={t.id}
-                      className="rounded-2xl border overflow-hidden"
-                      style={{
-                        borderColor: t.isCurrentChampion ? `${accent}50` : "var(--border-med)",
-                        background: "var(--bg-card)",
-                        boxShadow: t.isCurrentChampion ? `0 0 0 1px ${accent}28, 0 4px 20px ${accent}14` : "none",
-                      }}
-                    >
-                      {/* Accent top bar */}
-                      <div className="h-[3px]" style={{ background: accent }} />
-
-                      <div className="p-5">
-                        {/* Header row */}
-                        <div className="flex items-start justify-between mb-4">
-                          <div className="flex-1 min-w-0 pr-3">
-                            {/* Format + current champion badge */}
-                            <div className="flex items-center gap-2 mb-2 flex-wrap">
-                              <span className="text-[9px] font-mono font-bold uppercase tracking-wider px-1.5 py-0.5 rounded"
-                                style={{ background: accent + "18", color: accent }}>
-                                {t.format}
-                              </span>
-                              {t.isCurrentChampion && (
-                                <span className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded text-[9px] font-bold uppercase tracking-wide"
-                                  style={{ background: `${accent}18`, color: accent }}>
-                                  <StarIcon size={8} />
-                                  Defending
-                                </span>
-                              )}
-                            </div>
-                            {/* Trophy name */}
-                            <h3 className="font-bold text-sm leading-snug" style={{ color: "var(--text-primary)" }}>
-                              {t.shortName}
-                            </h3>
-                          </div>
-
-                          {/* Win count */}
-                          <div className="flex-shrink-0 flex flex-col items-end gap-0.5">
-                            <span className="font-black font-display leading-none"
-                              style={{ fontSize: 28, color: accent }}>
-                              {t.countryWins.length}
-                            </span>
-                            <span className="text-[9px] font-mono uppercase tracking-widest"
-                              style={{ color: "var(--text-dim)" }}>
-                              title{t.countryWins.length !== 1 ? "s" : ""}
-                            </span>
-                          </div>
-                        </div>
-
-                        {/* Year pills */}
-                        <div className="flex flex-wrap gap-1.5 mb-3">
-                          {t.countryWins.map((w) => (
-                            <span key={w.year}
-                              className="px-2 py-0.5 text-[10px] rounded tabular-nums font-mono"
-                              style={{ background: "var(--bg-subtle)", color: "var(--text-dim)" }}>
-                              {w.year}
-                            </span>
-                          ))}
-                        </div>
-
-                      </div>
-                    </div>
-                  );
-                })}
+                {wonTrophies.map((t) => (
+                  <TrophyCard key={t.id} t={t} />
+                ))}
               </div>
             )}
           </div>
