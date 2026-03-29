@@ -240,7 +240,7 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
           ))}
           <h1 className="font-display text-4xl font-black tracking-tight mb-1"
             style={{ background: "linear-gradient(135deg, var(--text-primary) 60%, #F5A623 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-            Cabinet
+            Trophy Room
           </h1>
           <p className="text-sm" style={{ color: "var(--text-muted)" }}>
             ICC trophy leaderboard · {allCountries.length} nations · {filteredTrophies.reduce((s, t) => s + t.winners.length, 0)} titles awarded
