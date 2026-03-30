@@ -342,7 +342,7 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
         .cabinet-star { animation: twinkle 3s ease-in-out infinite; }
       `}</style>
 
-      <div className="max-w-6xl mx-auto px-5 pt-12 pb-20">
+      <div className="max-w-6xl mx-auto px-4 sm:px-5 pt-8 sm:pt-12 pb-20">
 
         {/* ── Page header ── */}
         <div className="relative mb-10 overflow-visible">
@@ -376,15 +376,15 @@ export default function TrophyShelf({ trophies, gender, country }: Props) {
         </div>
 
         {/* ── Country pills ── */}
-        <div className="flex flex-wrap gap-2 mb-8">
+        <div className="flex gap-2 mb-8 overflow-x-auto pb-1 scrollbar-hide" style={{ scrollbarWidth: "none" }}>
           <Link href={`/cabinet/${gender}/all`}
-            className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full border transition-all"
+            className="flex shrink-0 items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full border transition-all"
             style={!country ? { background: "#F5A623", color: "#000", borderColor: "#F5A623" } : { background: "transparent", color: "var(--text-muted)", borderColor: "var(--border-med)" }}>
             All nations
           </Link>
           {allCountries.map((c) => (
             <Link key={c} href={`/cabinet/${gender}/${teamToSlug(c)}`}
-              className="flex items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full border transition-all"
+              className="flex shrink-0 items-center gap-2 px-3 py-1.5 text-sm font-medium rounded-full border transition-all"
               style={country === c ? { background: "#F5A623", color: "#000", borderColor: "#F5A623" } : { background: "transparent", color: "var(--text-muted)", borderColor: "var(--border-med)" }}>
               <FlagDisplay team={c} size={16} />
               {c}

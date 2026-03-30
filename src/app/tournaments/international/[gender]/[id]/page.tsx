@@ -82,7 +82,7 @@ export default async function TrophyPage({ params }: { params: Promise<{ gender:
       >
         <div className={`absolute inset-0 bg-gradient-to-br ${trophy.color} pointer-events-none`} style={{ opacity: 0.06 }} />
 
-        <div className="relative max-w-7xl mx-auto px-6 py-5">
+        <div className="relative max-w-7xl mx-auto px-4 sm:px-6 py-4 sm:py-5">
           {/* Back link */}
           <div className="mb-4">
             <Link
@@ -158,7 +158,7 @@ export default async function TrophyPage({ params }: { params: Promise<{ gender:
       </section>
 
       {/* ── Body: 3-col on lg — Most Successful | History | Runners Up ── */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
         <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr_250px] gap-6 items-start">
 
         {/* ── LEFT: Most Successful ── */}

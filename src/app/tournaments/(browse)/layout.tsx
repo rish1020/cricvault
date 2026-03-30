@@ -11,7 +11,7 @@ export default function TournamentsLayout({
       style={{ background: "var(--background)", color: "var(--foreground)" }}
     >
       {/* ── Page header ── */}
-      <div className="max-w-6xl mx-auto px-5 pt-12 pb-0">
+      <div className="max-w-6xl mx-auto px-4 sm:px-5 pt-8 sm:pt-12 pb-0">
         <p
           className="text-[10px] uppercase tracking-[0.22em] mb-2"
           style={{ color: "var(--text-muted)", fontFamily: "var(--font-geist-mono)" }}

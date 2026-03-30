@@ -107,19 +107,19 @@ export default function Hero({
         />
       </div>
 
-      <div className="relative flex-1 flex items-center max-w-6xl mx-auto w-full px-5 py-8">
+      <div className="relative flex-1 flex items-center max-w-6xl mx-auto w-full px-4 sm:px-5 py-6 sm:py-8">
         <div className="grid lg:grid-cols-[1fr_420px] gap-10 items-center w-full">
 
           {/* ── LEFT: Editorial headline ── */}
           <div>
             {/* Eyebrow tag */}
-            <div className="flex items-center gap-2 mb-5">
+            <div className="flex items-center gap-2 mb-5 overflow-hidden">
               <span
-                className="w-1.5 h-1.5 rounded-full bg-amber-400"
+                className="shrink-0 w-1.5 h-1.5 rounded-full bg-amber-400"
                 style={{ animation: "pulse-dot 2s ease-in-out infinite" }}
               />
               <span
-                className="text-[11px] font-semibold tracking-[0.22em] uppercase"
+                className="text-[11px] font-semibold tracking-[0.15em] uppercase truncate"
                 style={{ color: "rgba(245,166,35,0.7)", fontFamily: "var(--font-geist-mono)" }}
               >
                 ICC · International Cricket · Since 1973
@@ -129,7 +129,7 @@ export default function Hero({
             {/* Main headline */}
             <h1
               className="font-display leading-[0.88] tracking-tighter"
-              style={{ fontSize: "clamp(3.8rem, 8vw, 6.5rem)", fontWeight: 800 }}
+              style={{ fontSize: "clamp(2.4rem, 10vw, 6.5rem)", fontWeight: 800 }}
             >
               <span className="block" style={{ color: "var(--text-primary)" }}>Every</span>
               <span
@@ -159,7 +159,7 @@ export default function Hero({
             </p>
 
             {/* CTAs */}
-            <div className="mt-6 flex items-center gap-4 flex-wrap">
+            <div className="mt-6 flex items-center gap-3 flex-wrap">
               <a
                 href="/tournaments/international/men"
                 className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl font-bold text-sm text-black transition-all"

@@ -30,7 +30,7 @@ function IntlCard({ trophy }: { trophy: Trophy }) {
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
           <span
             className="font-display font-black text-white/[0.12] group-hover:text-white/[0.18] transition-all duration-500 leading-none text-center px-4"
-            style={{ fontSize: "clamp(1.6rem, 5vw, 3rem)", letterSpacing: "-0.02em" }}
+            style={{ fontSize: "clamp(1.2rem, 5vw, 3rem)", letterSpacing: "-0.02em" }}
           >
             {trophy.shortName}
           </span>
@@ -126,7 +126,7 @@ function DomCard({ trophy }: { trophy: DomesticTrophy }) {
         <div className="absolute inset-0 flex items-center justify-center pointer-events-none select-none">
           <span
             className="font-display font-black text-white/[0.12] group-hover:text-white/[0.18] transition-all duration-500 leading-none text-center"
-            style={{ fontSize: "clamp(2rem, 6vw, 3.5rem)", letterSpacing: "-0.02em" }}
+            style={{ fontSize: "clamp(1.2rem, 5vw, 3.5rem)", letterSpacing: "-0.02em" }}
           >
             {trophy.shortName}
           </span>

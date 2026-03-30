@@ -9,7 +9,7 @@ export const metadata = {
 export default function WomensTournamentsPage() {
   const womenTrophies = trophies.filter((t) => t.gender === "women");
   return (
-    <section className="max-w-6xl mx-auto px-6 py-10">
+    <section className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10">
       <InternationalGrid trophies={womenTrophies} />
     </section>
   );
