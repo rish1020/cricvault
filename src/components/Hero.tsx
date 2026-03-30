@@ -129,7 +129,7 @@ export default function Hero({
             {/* Main headline */}
             <h1
               className="font-display leading-[0.88] tracking-tighter"
-              style={{ fontSize: "clamp(2.4rem, 10vw, 6.5rem)", fontWeight: 800 }}
+              style={{ fontSize: "clamp(2rem, 9vw, 6.5rem)", fontWeight: 800 }}
             >
               <span className="block" style={{ color: "var(--text-primary)" }}>Every</span>
               <span
