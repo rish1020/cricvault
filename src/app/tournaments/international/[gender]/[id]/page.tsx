@@ -116,11 +116,11 @@ export default async function TrophyPage({ params }: { params: Promise<{ gender:
                 </span>
               </div>
 
-              <h1 className="font-display font-bold tracking-tight leading-tight" style={{ fontSize: "clamp(1.4rem, 3vw, 2rem)", color: "var(--text-primary)" }}>
+              <h1 className="font-display font-bold tracking-tight leading-tight" style={{ fontSize: "clamp(1.05rem, 3.8vw, 2rem)", color: "var(--text-primary)" }}>
                 {trophy.name}
               </h1>
 
-              <p className="mt-1 text-[13px] line-clamp-1" style={{ color: "var(--text-secondary)" }}>
+              <p className="mt-1 text-[13px] line-clamp-2" style={{ color: "var(--text-secondary)" }}>
                 {trophy.description}
               </p>
             </div>
